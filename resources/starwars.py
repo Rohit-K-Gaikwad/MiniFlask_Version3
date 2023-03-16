@@ -34,12 +34,15 @@ def welcome():
 def get_characters():
     data = fetch_resource("people")
     characters = data.get("results")
-    characters = parse_obj_as(list(characters), Character_)
+    # breakpoint()
+    # characters = parse_obj_as(list(characters), Character_)
     response = {
         "count": data.get("count"),
         "message": "successful"
     }
-    return Response(response, status=200, mimetype="application/json")
+    breakpoint()
+    # return Response(response, status=200, mimetype="application/json")
+    return response
 
 
 
