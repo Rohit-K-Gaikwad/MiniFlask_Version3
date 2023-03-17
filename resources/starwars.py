@@ -38,7 +38,7 @@ class PostFilmResponse(BaseModel):
             return int(records_count)
 
 
-# Blueprit class instantiation
+# Blueprint class instantiation
 starwar_app = Blueprint("starwars", __name__, url_prefix="/starwars")
 
 
@@ -127,7 +127,6 @@ def post_films():
         "film", "film_id", film_data.episode_id, film_columns, film_values
     )
 
-    msg = None
     if result:
         msg = "record created successfully"
     else:
@@ -154,10 +153,3 @@ def post_films():
         status=201,
         mimetype="application/json"
     )
-
-
-
-
-
-
-
