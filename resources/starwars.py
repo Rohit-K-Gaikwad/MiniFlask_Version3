@@ -15,6 +15,28 @@ from models.datamodels.films import Film_
 from pydantic import parse_obj_as, error_wrappers
 
 
+from pydantic import BaseModel, validator
+from typing import Optional
+
+
+class PostFilmResponse(BaseModel):
+    """
+      response_obj = {
+        "records_count": result,
+        "film_name": film_data.title,
+        "message": msg
+    }
+    """
+
+    records_count: Optional[int, str]
+    film_name: str
+    message: str
+
+    @validator("records_count")
+    def check_records_count(cls, records_count):
+        if isinstance(records_count, int) or isinstance(records_count, str):
+            return int(records_count)
+
 
 # Blueprit class instantiation
 starwar_app = Blueprint("starwars", __name__, url_prefix="/starwars")
@@ -106,6 +128,10 @@ def post_films():
         "film_name": film_data.title,
         "message": msg
     }
+
+    # response validation
+    PostFilmResponse(**response_obj)
+
     return Response(
         json.dumps(response_obj),
         status=201,
