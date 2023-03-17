@@ -69,6 +69,20 @@ def get_characters():
 
 @starwar_app.route("/films", methods=["POST"])
 def post_films():
+    """
+        {
+      "title": "A New Hope",
+      "episode_id": 99991111,
+      "opening_crawl": "random",
+      "director": "George Lucas",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1977-05-25",
+      "created": "2014-12-10T14:23:31.880000Z",
+      "edited": "2014-12-20T19:49:45.256000Z",
+      "url": "https://swapi.dev/api/films/1/"
+    }
+    :return:
+    """
 
     request_data = request.json
     # request body validation
