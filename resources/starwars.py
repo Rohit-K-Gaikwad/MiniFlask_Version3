@@ -16,7 +16,7 @@ from pydantic import parse_obj_as, error_wrappers
 
 
 from pydantic import BaseModel, validator
-from typing import Optional
+from typing import Union, Optional
 
 
 class PostFilmResponse(BaseModel):
@@ -28,8 +28,8 @@ class PostFilmResponse(BaseModel):
     }
     """
 
-    records_count: Optional[int, str]
-    film_name: str
+    records_count: Union[int, str]
+    film_name: Optional[str]
     message: str
 
     @validator("records_count")
