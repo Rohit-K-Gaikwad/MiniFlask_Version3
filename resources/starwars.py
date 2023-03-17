@@ -12,7 +12,7 @@ from flask import Blueprint, request, Response
 from dal.dml import fetch_resource, insert_resource
 from models.datamodels.characters import Character_
 from models.datamodels.films import Film_
-from pydantic import parse_obj_as
+from pydantic import parse_obj_as, error_wrappers
 
 
 
@@ -50,7 +50,17 @@ def post_films():
 
     request_data = request.json
     # request body validation
-    film_data = Film_(**request_data)
+    try:
+        film_data = Film_(**request_data)
+    except error_wrappers.ValidationError as ex:
+        response_obj = {
+            "message": f"{ex}"
+        }
+        return Response(
+            json.dumps(response_obj),
+            status=422,
+            mimetype="application/json"
+        )
 
     film_columns = [
         "title",
@@ -78,21 +88,27 @@ def post_films():
         "film", "film_id", film_data.episode_id, film_columns, film_values
     )
 
-    breakpoint()
     msg = None
     if result:
         msg = "record created successfully"
     else:
-        msg = "failed to insert_data"
+        response_obj = {
+            "message": "failed to insert record"
+        }
+        return Response(
+            json.dumps(response_obj),
+            status=409,
+            mimetype="application/json"
+        )
 
     response_obj = {
         "records_count": result,
-        "film_name": film_data.title if result else "",
-        "message": msg if result else "ERROR",
+        "film_name": film_data.title,
+        "message": msg
     }
     return Response(
         json.dumps(response_obj),
-        status=201 if result else 409,
+        status=201,
         mimetype="application/json"
     )
 
