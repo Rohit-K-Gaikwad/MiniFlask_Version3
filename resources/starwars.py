@@ -9,10 +9,11 @@ PUT
 
 import json
 from flask import Blueprint, request, Response
-from dal.dml import fetch_resource, insert_resource, __delete_resource
+from dal.dml import fetch_resource, insert_resource, __delete_resource, upsert_films
 from models.datamodels.characters import Character_
 from models.datamodels.films import Film_
 from pydantic import parse_obj_as, error_wrappers
+from pydantic.error_wrappers import ValidationError
 
 
 from pydantic import BaseModel, validator
@@ -185,7 +186,49 @@ def delete_films():
     )
 
 
-    breakpoint()
+@starwar_app.route("/films", methods=["PUT"])
+def put_films():
+    """
+
+    Returns:
+
+    """
+
+    # how to capture request body/ request payload/ request data?
+    request_data = request.json
+
+    # request validation
+    try:
+        film_data = Film_(**request_data)
+    except ValidationError as ex:
+        return Response(
+            json.dumps({"message": "bad request"}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    home_url = "https://swapi.dev"
+    relative_url = "/api/film/{num_}"  # magic string
+    absolute_url = home_url + relative_url.format(num_=film_data.episode_id)
+    result = upsert_films(film_data, absolute_url)
+    if result:
+        msg = "New record created successfully"
+    else:
+        msg = "existing record has been updated"
+
+    response_obj = {
+        "records_count": result,
+        "film_name": film_data.title,
+        "message": msg
+    }
+    return Response(
+        json.dumps(response_obj),
+        status=200,
+        mimetype="application/json"
+    )
+
+
+
 
 
 
