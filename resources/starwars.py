@@ -245,12 +245,6 @@ def put_films():
     )
 
 
-
-
-
-
-
-
 @starwar_app.route("/films", methods=["DELETE"])
 def delete_films():
     """
