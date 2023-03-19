@@ -9,7 +9,7 @@ PUT
 
 import json
 from flask import Blueprint, request, Response
-from dal.dml import fetch_resource, insert_resource
+from dal.dml import fetch_resource, insert_resource, __delete_resource
 from models.datamodels.characters import Character_
 from models.datamodels.films import Film_
 from pydantic import parse_obj_as, error_wrappers
@@ -151,6 +151,43 @@ def post_films():
         status=201,
         mimetype="application/json"
     )
+
+
+@starwar_app.route("/films", methods=["DELETE"])
+def delete_films():
+    """
+     https://127.0.0.1:8080/films/1  (path param)
+     https://127.0.0.1:8080/films?film_id=1  (query param)
+
+    Returns:
+
+    """
+
+    # how to capture query parameters?
+    film_id = int(request.args.get("film_id"))
+    result = __delete_resource("starwarsDB.film", "film_id", film_id)
+    if result == 0:
+        response_obj = {
+            "ERROR": f"no records to delete against film_id - {film_id}"
+        }
+        return Response(
+            json.dumps(response_obj),
+            status=409,
+            mimetype="application/json"
+        )
+    response_obj = {
+        "message": f"record against film_id - {film_id} deleted successfully"
+    }
+    return Response(
+        json.dumps(response_obj),
+        status=200,
+        mimetype="application/json"
+    )
+
+
+    breakpoint()
+
+
 
 
 

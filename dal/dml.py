@@ -3,9 +3,10 @@ DML stands for Data Manipulation Language
 
 This module contains generic functions to insert data into sql tables
 """
+import pymysql
 import requests
 from dal.db_conn_helper import get_db_conn
-from typing import List
+from typing import List, Union
 from pymysql.err import IntegrityError
 
 
@@ -62,6 +63,38 @@ def fetch_resource(resource):
     response = requests.get(resource_url)
     data = response.json()
     return data
+
+
+def __delete_resource(
+        table_name: str,
+        primary_key: str,
+        primary_val: Union[str, int]):
+    """
+    function deletes records based on primary key
+
+    Args:
+        table_name:
+        primary_key:
+        primary_val:
+
+    Returns:
+
+    """
+
+    try:
+        with get_db_conn() as conn:
+            cursor = conn.cursor()
+            sql_magic = f"delete from {table_name} where {primary_key}={primary_val}"
+            data = cursor.execute(sql_magic)
+            conn.commit()
+        return data
+    except pymysql.Error as ex:
+        print(f"[ ERROR ] details - {ex}")
+        return 0
+
+
+
+
 
 
 if __name__ == "__main__":
