@@ -86,7 +86,6 @@ def post_films():
     }
     :return:
     """
-
     request_data = request.json
     # request body validation
     try:
