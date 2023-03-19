@@ -280,9 +280,20 @@ def delete_films():
 @starwar_app.route("/films", methods=["PUT"])
 def put_films():
     """
-
+    HTTP PUT -  http://127.0.0.1:5000/starwars/films
+    payload -
+    {
+      "title": "A New Hope - RANDOM",
+      "episode_id": 4,
+      "opening_crawl": "random",
+      "director": "George Lucas",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1977-05-25",
+      "created": "2014-12-10T14:23:31.880000Z",
+      "edited": "2014-12-20T19:49:45.256000Z",
+      "url": "https://swapi.dev/api/films/1/"
+    }
     Returns:
-
     """
 
     # how to capture request body/ request payload/ request data?
