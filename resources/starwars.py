@@ -18,6 +18,7 @@ from pydantic.error_wrappers import ValidationError
 
 from pydantic import BaseModel, validator
 from typing import Union, Optional
+from datetime import datetime
 
 
 class PostFilmResponse(BaseModel):
@@ -37,6 +38,19 @@ class PostFilmResponse(BaseModel):
     def check_records_count(cls, records_count):
         if isinstance(records_count, int) or isinstance(records_count, str):
             return int(records_count)
+
+
+class PatchFilm_(BaseModel):
+    film_id: int
+    title: Optional[str]
+    episode_id: Optional[int]
+    opening_crawl: Optional[str]
+    director: Optional[str]
+    producer: Optional[str]
+    release_date: Union[str, datetime]
+    created: Union[str, datetime]
+    edited: Union[str, datetime]
+    url: Optional[str]
 
 
 # Blueprit class instantiation
@@ -222,6 +236,50 @@ def put_films():
             status=400,
             mimetype="application/json"
         )
+
+    home_url = "https://swapi.dev"
+    relative_url = "/api/film/{num_}"  # magic string
+    absolute_url = home_url + relative_url.format(num_=film_data.episode_id)
+    result = upsert_films(film_data, absolute_url)
+    if result:
+        msg = "New record created successfully"
+    else:
+        msg = "existing record has been updated"
+
+    response_obj = {
+        "records_count": result,
+        "film_name": film_data.title,
+        "message": msg
+    }
+    return Response(
+        json.dumps(response_obj),
+        status=200,
+        mimetype="application/json"
+    )
+
+
+@starwar_app.route("/films", methods=["PATCH"])
+def patch_films():
+    """
+    {
+      "film_id": 4,
+      "title": "A New Hope - RANDOM",
+      "episode_id": 4,
+      "opening_crawl": "random",
+      "director": "George Lucas",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1977-05-25",
+      "created": "2014-12-10T14:23:31.880000Z",
+      "edited": "2014-12-20T19:49:45.256000Z",
+      "url": "https://swapi.dev/api/films/1/"
+    }
+
+    Returns:
+
+    """
+
+    request_data = request.json
+    film_data = PatchFilm_(**request_data)
 
     home_url = "https://swapi.dev"
     relative_url = "/api/film/{num_}"  # magic string

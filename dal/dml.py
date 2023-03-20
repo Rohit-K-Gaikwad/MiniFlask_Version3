@@ -4,11 +4,20 @@ DML stands for Data Manipulation Language
 This module contains generic functions to insert data into sql tables
 """
 import pymysql
+import logging
 import requests
 from dal.db_conn_helper import get_db_conn
 from typing import List, Union, Dict, Optional
 from pymysql.err import IntegrityError
 from collections import OrderedDict
+
+
+# logging configuration
+logging.basicConfig(
+    encoding="utf-8",
+    level=logging.INFO
+)
+
 
 
 def insert_resource(
@@ -233,6 +242,7 @@ def upsert_films(film: Dict, endpoint: str) -> Optional[int]:
             )
 
             print(f"\n see here the SQL query :: \n\n{sql}")
+            logging.info('random statement')
 
             result = cursor.execute(sql)
             connection.commit()
