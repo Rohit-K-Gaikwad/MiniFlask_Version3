@@ -5,6 +5,7 @@ This module contains generic functions to insert data into sql tables
 """
 import pymysql
 import requests
+import logging
 from dal.db_conn_helper import get_db_conn
 from typing import List, Union, Dict, Optional
 from pymysql.err import IntegrityError
@@ -97,7 +98,7 @@ def __delete_resource(
 def build_upsert_sql_query(
     table_name, commands, prime_key, prime_value, clause, keys_, values_
 ) -> str:
-    """BUilds sql query based on input.
+    """Builds sql query based on input.
     Args:
         table_name (str): table under consideration for sql query.
         commands (str): sql commands such as select, insert, update etc.
@@ -208,8 +209,9 @@ def upsert_films(film: Dict, endpoint: str) -> Optional[int]:
     # If endpoint yields no result then return.
 
     try:
-        if film is not OrderedDict([("detail", "Not found")]):
-            Film_(**film)
+        if film is not OrderedDict([("detail", "Not found")]):  # Iterable: to determine whether an object is iterable
+            Film_(**film)                                                  # is to call iter(obj).
+
         else:
             print(f"\n\n[ WARNING ] Endpoint - {endpoint} - yields nothing!!")
             return None
@@ -237,7 +239,7 @@ def upsert_films(film: Dict, endpoint: str) -> Optional[int]:
             result = cursor.execute(sql)
             connection.commit()
     except pymysql.Error as ex:
-        logging.error("ERROR. Details - {ex}")
+        logging.error(f"ERROR. Details - {ex}")
         return 0
     finally:
         connection.close()
